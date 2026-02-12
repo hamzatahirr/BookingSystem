@@ -9,7 +9,7 @@ export default function Navbar({ title }) {
 
   const hideNavbarRoutes = ["/login", "/signup"];
 
-  // ✅ Protect routes
+  // Protect routes
   useEffect(() => {
     const email = sessionStorage.getItem("email");
 

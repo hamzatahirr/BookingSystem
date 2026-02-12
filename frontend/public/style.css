@@ -1,0 +1,21 @@
+html, body, #root {
+  height: 100%;
+  margin: 0;
+}
+
+.app-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.content {
+  flex: 1;
+}
+
+.foot{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+}

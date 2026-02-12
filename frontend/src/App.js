@@ -11,36 +11,35 @@ import Results from "./Components/Results";
 import ForgetPass from "./Components/ForgetPass";
 
 function App() {
-return (
-<Router>
-<div className="app-container">
+    return (
+        <Router>
+            <div className="app-container">
 
-<Navbar title="Bus Booking System" />
+                <Navbar title="Bus Booking System" />
 
-<main className="content">
-<Routes>
+                <main className="content">
+                    <Routes>
 
-{/* Default */}
-<Route path="/" element={<AuthPageLogIn />} />
+                        {/* Default */}
+                        <Route path="/" element={<AuthPageLogIn />} />
 
-{/* Auth */}
-<Route path="/login" element={<AuthPageLogIn />} />
-<Route path="/signup" element={<AuthPageSignUp />} />
-<Route path="/forgetpass" element={<ForgetPass />} />
+                        {/* Auth */}
+                        <Route path="/login" element={<AuthPageLogIn />} />
+                        <Route path="/signup" element={<AuthPageSignUp />} />
+                        <Route path="/forgetpass" element={<ForgetPass />} />
 
-{/* System */}
-<Route path="/home" element={<Home />} />
-<Route path="/search" element={<Search />} />
-<Route path="/results" element={<Results />} />
-<Route path="/help" element={<Help />} />
+                        {/* System */}
+                        <Route path="/home" element={<Home />} />
+                        <Route path="/search" element={<Search />} />
+                        <Route path="/results" element={<Results />} />
+                        <Route path="/help" element={<Help />} />
 
-</Routes>
-</main>
-
-<Footer />
-</div>
-</Router>
- );
+                    </Routes>
+                </main>
+                <Footer />
+            </div>
+        </Router>
+    );
 }
 
 export default App;
