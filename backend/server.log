@@ -1,0 +1,17 @@
+
+> backend@1.0.0 start
+> node server.js
+
+[dotenv@17.2.4] injecting env (3) from .env -- tip: ⚙️  specify custom .env file path with { path: '/custom/path/.env' }
+Server running on port 5000
+MongoDB Connected
+Server running on port 5000
+Signup error: TypeError: next is not a function
+    at model.<anonymous> (/media/hamza/Study/Work/Mehroz/Group project (Agile)/App/backend/src/models/User.js:40:5)
+    at async Kareem.execPre (/media/hamza/Study/Work/Mehroz/Group project (Agile)/App/backend/node_modules/kareem/index.js:70:24)
+    at async model.$__save (/media/hamza/Study/Work/Mehroz/Group project (Agile)/App/backend/node_modules/mongoose/lib/model.js:371:5)
+    at async model.save (/media/hamza/Study/Work/Mehroz/Group project (Agile)/App/backend/node_modules/mongoose/lib/model.js:614:5)
+    at async /media/hamza/Study/Work/Mehroz/Group project (Agile)/App/backend/node_modules/mongoose/lib/model.js:2750:9
+    at async Promise.all (index 0)
+    at async Function.create (/media/hamza/Study/Work/Mehroz/Group project (Agile)/App/backend/node_modules/mongoose/lib/model.js:2735:11)
+    at async signup (/media/hamza/Study/Work/Mehroz/Group project (Agile)/App/backend/src/controllers/authController.js:20:18)
