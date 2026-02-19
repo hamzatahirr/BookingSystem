@@ -73,6 +73,14 @@ export default function Home() {
                 </div>
 
                 <div
+                    onClick={() => navigate("/mybookings")}
+                    style={cardStyle}
+                >
+                    <h3>My Bookings</h3>
+                    <p>View and manage your booked tickets.</p>
+                </div>
+
+                <div
                     onClick={() => navigate("/help")}
                     style={cardStyle}
                 >

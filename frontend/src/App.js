@@ -9,6 +9,9 @@ import Search from "./Components/Search";
 import Help from "./Components/Help";
 import Results from "./Components/Results";
 import ForgetPass from "./Components/ForgetPass";
+import SeatSelection from "./Components/SeatSelection";
+import BookingConfirmation from "./Components/BookingConfirmation";
+import MyBookings from "./Components/MyBookings";
 
 function App() {
     return (
@@ -33,6 +36,9 @@ function App() {
                         <Route path="/search" element={<Search />} />
                         <Route path="/results" element={<Results />} />
                         <Route path="/help" element={<Help />} />
+                        <Route path="/seats" element={<SeatSelection />} />
+                        <Route path="/confirmation" element={<BookingConfirmation />} />
+                        <Route path="/mybookings" element={<MyBookings />} />
 
                     </Routes>
                 </main>

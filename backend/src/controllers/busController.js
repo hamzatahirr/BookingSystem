@@ -31,7 +31,8 @@ const searchBuses = async (req, res) => {
       busType: bus.busType,
       availableSeats: bus.availableSeats,
       totalSeats: bus.totalSeats,
-      amenities: bus.amenities
+      amenities: bus.amenities,
+      travelDate: bus.travelDate
     }));
 
     res.json(formattedBuses);

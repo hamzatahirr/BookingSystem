@@ -9,6 +9,13 @@ const seedBuses = async () => {
     
     await Bus.deleteMany({});
     
+    const today = new Date();
+    const getFutureDate = (days) => {
+      const date = new Date(today);
+      date.setDate(date.getDate() + days);
+      return date.toISOString().split('T')[0];
+    };
+
     const buses = [
       {
         busName: "Express Line",
@@ -21,7 +28,8 @@ const seedBuses = async () => {
         availableSeats: 35,
         busType: "Express",
         amenities: ["WiFi", "AC", "Charging Points"],
-        operatingDays: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+        operatingDays: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+        travelDate: getFutureDate(2)
       },
       {
         busName: "Super Coach",
@@ -34,7 +42,8 @@ const seedBuses = async () => {
         availableSeats: 28,
         busType: "Standard",
         amenities: ["AC", "Charging Points"],
-        operatingDays: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
+        operatingDays: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+        travelDate: getFutureDate(3)
       },
       {
         busName: "Luxury Express",
@@ -47,7 +56,8 @@ const seedBuses = async () => {
         availableSeats: 22,
         busType: "Luxury",
         amenities: ["WiFi", "AC", "Charging Points", "Refreshments", "Extra Legroom"],
-        operatingDays: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+        operatingDays: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+        travelDate: getFutureDate(1)
       },
       {
         busName: "Night Rider",
@@ -60,7 +70,8 @@ const seedBuses = async () => {
         availableSeats: 18,
         busType: "Sleeper",
         amenities: ["WiFi", "AC", "Charging Points", "Sleeping Berths", "Blankets"],
-        operatingDays: ["Friday", "Saturday", "Sunday"]
+        operatingDays: ["Friday", "Saturday", "Sunday"],
+        travelDate: getFutureDate(5)
       },
       {
         busName: "City Link",
@@ -73,7 +84,8 @@ const seedBuses = async () => {
         availableSeats: 31,
         busType: "Express",
         amenities: ["WiFi", "AC", "Charging Points"],
-        operatingDays: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+        operatingDays: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+        travelDate: getFutureDate(2)
       },
       {
         busName: "Economy Service",
@@ -86,7 +98,8 @@ const seedBuses = async () => {
         availableSeats: 42,
         busType: "Standard",
         amenities: ["AC"],
-        operatingDays: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
+        operatingDays: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+        travelDate: getFutureDate(4)
       },
       {
         busName: "Business Class",
@@ -99,7 +112,8 @@ const seedBuses = async () => {
         availableSeats: 15,
         busType: "Luxury",
         amenities: ["WiFi", "AC", "Charging Points", "Refreshments", "Extra Legroom", "Business Lounge"],
-        operatingDays: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
+        operatingDays: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+        travelDate: getFutureDate(1)
       },
       {
         busName: "Weekend Special",
@@ -112,7 +126,8 @@ const seedBuses = async () => {
         availableSeats: 38,
         busType: "Express",
         amenities: ["WiFi", "AC", "Charging Points"],
-        operatingDays: ["Saturday", "Sunday"]
+        operatingDays: ["Saturday", "Sunday"],
+        travelDate: getFutureDate(6)
       }
     ];
 

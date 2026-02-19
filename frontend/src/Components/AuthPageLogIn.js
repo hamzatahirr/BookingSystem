@@ -38,6 +38,11 @@ export default function LogIn() {
       // Save email for session
       sessionStorage.setItem("email", formData.email);
 
+      // Save userId for booking
+      if (response.data?.user?.id) {
+        sessionStorage.setItem("userId", response.data.user.id);
+      }
+
       navigate("/home");
 
     } catch (err) {

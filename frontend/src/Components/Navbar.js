@@ -49,6 +49,7 @@ export default function Navbar({ title }) {
 
         <Link to="/home" style={linkStyle}>Home</Link>
         <Link to="/search" style={linkStyle}>Search Buses</Link>
+        <Link to="/mybookings" style={linkStyle}>My Bookings</Link>
         <Link to="/help" style={linkStyle}>Help</Link>
 
         <span

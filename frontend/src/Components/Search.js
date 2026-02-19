@@ -35,8 +35,8 @@ export default function Search() {
         searchData
       );
 
-      // Navigate to results page
-      navigate("/results", { state: response.data });
+      // Navigate to results page with search data
+      navigate("/results", { state: { ...response.data, searchData } });
 
     } catch (error) {
 
@@ -50,7 +50,11 @@ export default function Search() {
           from: searchData.from,
           to: searchData.to,
           time: "10:00 AM",
-          price: "$15"
+          arrivalTime: "4:00 PM",
+          price: "$15",
+          availableSeats: 20,
+          totalSeats: 40,
+          busType: "Express"
         },
         {
           id: 2,
@@ -58,11 +62,15 @@ export default function Search() {
           from: searchData.from,
           to: searchData.to,
           time: "2:00 PM",
-          price: "$18"
+          arrivalTime: "8:00 PM",
+          price: "$18",
+          availableSeats: 15,
+          totalSeats: 40,
+          busType: "Standard"
         }
       ];
 
-      navigate("/results", { state: dummyBuses });
+      navigate("/results", { state: { ...dummyBuses, searchData } });
 
       setError("Backend not connected. Showing demo data.");
 
