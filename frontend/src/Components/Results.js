@@ -5,8 +5,9 @@ export default function Results() {
     const location = useLocation();
     const navigate = useNavigate();
 
-    const buses = location.state || [];
+    const buses = location.state?.buses || [];
     const searchData = location.state?.searchData || {};
+    console.log(buses.length);
 
     return (
         <div style={{ padding: "40px", minHeight: "70vh", backgroundColor: "#f5f6fa" }}>

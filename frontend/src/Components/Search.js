@@ -36,7 +36,7 @@ export default function Search() {
       );
 
       // Navigate to results page with search data
-      navigate("/results", { state: { ...response.data, searchData } });
+      navigate("/results", { state: { buses: response.data, searchData } });
 
     } catch (error) {
 
@@ -70,7 +70,7 @@ export default function Search() {
         }
       ];
 
-      navigate("/results", { state: { ...dummyBuses, searchData } });
+      navigate("/results", { state: { buses: dummyBuses, searchData } });
 
       setError("Backend not connected. Showing demo data.");
 
