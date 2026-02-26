@@ -20,7 +20,6 @@ export default function ForgetPass() {
 
         try {
             const response = await axios.post(`${process.env.REACT_APP_API_URL}/forgetpassword`, formData);
-            console.log('Password reset successful:', response.data);
 
             if (response.data.newPassword) {
                 setNewPassword(response.data.newPassword);
@@ -28,7 +27,6 @@ export default function ForgetPass() {
                 setErrorMsg('No password returned from server.');
             }
         } catch (error) {
-            console.error('Password reset failed:', error);
             setErrorMsg('Email not found. Please try again.');
         }
     };

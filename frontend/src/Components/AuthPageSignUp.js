@@ -41,7 +41,6 @@ export default function SignUp() {
 
       const response = await axios.post(`${process.env.REACT_APP_API_URL}/signup`, payload);
 
-      console.log("Signup successful:", response.data);
       setFormData({ name: "", email: "", password: "", confirmPassword: "" });
 
       setSuccess("Account created successfully!");
@@ -52,7 +51,6 @@ export default function SignUp() {
       }, 1500);
 
     } catch (err) {
-      console.error("Signup error:", err);
       setError("Failed to sign up. Try a different email.");
     }
   };

@@ -7,102 +7,149 @@ export default function Results() {
 
     const buses = location.state?.buses || [];
     const searchData = location.state?.searchData || {};
-    console.log(buses.length);
+
+    if (!Array.isArray(buses) || buses.length === 0) {
+        return (
+            <div style={{ padding: "40px", minHeight: "70vh", backgroundColor: "#f5f6fa", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <div style={{ textAlign: "center", background: "white", padding: "50px", borderRadius: "16px", boxShadow: "0 4px 20px rgba(0,0,0,0.1)" }}>
+                    <div style={{ fontSize: "60px", marginBottom: "20px" }}>🚌</div>
+                    <h2 style={{ color: "#666", marginBottom: "10px" }}>No Buses Found</h2>
+                    <p style={{ color: "#888", marginBottom: "25px" }}>Try searching with different cities or date</p>
+                    <button
+                        onClick={() => navigate("/search")}
+                        style={{
+                            padding: "14px 30px",
+                            backgroundColor: "#483f19",
+                            color: "#fff",
+                            borderRadius: "8px",
+                            cursor: "pointer",
+                            border: "none",
+                            fontSize: "16px",
+                            fontWeight: "500"
+                        }}
+                    >
+                        🔍 Search Again
+                    </button>
+                </div>
+            </div>
+        );
+    }
 
     return (
-        <div style={{ padding: "40px", minHeight: "70vh", backgroundColor: "#f5f6fa" }}>
-            <h2 style={{ marginBottom: "20px" }}>Available Buses</h2>
-
-            {buses.length === 0 || !Array.isArray(buses) ? (
-                <div style={{ textAlign: "center", padding: "40px" }}>
-                    <p>No buses found. Try searching again.</p>
+        <div style={{ padding: "40px 20px", minHeight: "70vh", backgroundColor: "#f5f6fa" }}>
+            <div style={{ maxWidth: "900px", margin: "0 auto" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "30px" }}>
+                    <div>
+                        <h2 style={{ margin: "0 0 5px 0", color: "#333" }}>Available Buses</h2>
+                        <p style={{ margin: 0, color: "#666" }}>
+                            {searchData.from} → {searchData.to} | {searchData.date}
+                        </p>
+                    </div>
                     <button
                         onClick={() => navigate("/search")}
                         style={{
                             padding: "10px 20px",
-                            backgroundColor: "#483f19",
-                            color: "#fff",
-                            borderRadius: "6px",
+                            backgroundColor: "white",
+                            color: "#483f19",
+                            borderRadius: "8px",
                             cursor: "pointer",
-                            border: "none",
-                            marginTop: "10px"
+                            border: "2px solid #483f19",
+                            fontSize: "14px",
+                            fontWeight: "500"
                         }}
                     >
-                        Search Buses
+                        ← Modify Search
                     </button>
                 </div>
-            ) : (
-                <div style={{ display: "grid", gap: "20px", marginTop: "20px", maxWidth: "900px" }}>
-                    {buses.map((bus) => (
+
+                <div style={{ display: "grid", gap: "20px" }}>
+                    {buses.map((bus, index) => (
                         <div
-                            key={bus.id}
+                            key={bus.id || index}
                             style={{
                                 padding: "25px",
-                                borderRadius: "12px",
-                                boxShadow: "0 4px 15px rgba(0,0,0,0.1)",
+                                borderRadius: "16px",
+                                boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
                                 background: "#fff",
+                                border: "1px solid #eee",
+                                transition: "transform 0.2s, box-shadow 0.2s"
+                            }}
+                            onMouseEnter={(e) => {
+                                e.currentTarget.style.transform = "translateY(-2px)";
+                                e.currentTarget.style.boxShadow = "0 8px 25px rgba(0,0,0,0.12)";
+                            }}
+                            onMouseLeave={(e) => {
+                                e.currentTarget.style.transform = "translateY(0)";
+                                e.currentTarget.style.boxShadow = "0 4px 20px rgba(0,0,0,0.08)";
                             }}
                         >
-                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-                                <div>
-                                    <h3 style={{ margin: "0 0 10px 0", color: "#333" }}>{bus.bus}</h3>
-                                    <p style={{ margin: "5px 0", color: "#666" }}>
-                                        <strong>From:</strong> {bus.from} → <strong>To:</strong> {bus.to}
-                                    </p>
-                                    <p style={{ margin: "5px 0", color: "#666" }}>
-                                        <strong>Departure:</strong> {bus.time} | <strong>Arrival:</strong> {bus.arrivalTime}
-                                    </p>
-                                    <p style={{ margin: "5px 0", color: "#666" }}>
-                                        <strong>Bus Type:</strong> {bus.busType || "Standard"} | 
-                                        <strong> Available Seats:</strong> {bus.availableSeats || "N/A"}
-                                    </p>
-                                    {bus.amenities && bus.amenities.length > 0 && (
-                                        <p style={{ margin: "5px 0", color: "#888", fontSize: "14px" }}>
-                                            <strong>Amenities:</strong> {bus.amenities.join(", ")}
-                                        </p>
-                                    )}
+                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "20px" }}>
+                                <div style={{ flex: "1 1 300px" }}>
+                                    <div style={{ display: "flex", alignItems: "center", gap: "15px", marginBottom: "15px" }}>
+                                        <span style={{ 
+                                            background: "#483f19", 
+                                            color: "white", 
+                                            padding: "8px 15px", 
+                                            borderRadius: "8px",
+                                            fontWeight: "600",
+                                            fontSize: "14px"
+                                        }}>
+                                            {bus.busType || "Standard"}
+                                        </span>
+                                        <h3 style={{ margin: 0, color: "#333", fontSize: "22px" }}>{bus.bus}</h3>
+                                    </div>
+                                    
+                                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "15px", marginBottom: "15px" }}>
+                                        <div>
+                                            <p style={{ margin: "0 0 5px 0", color: "#888", fontSize: "13px" }}>FROM</p>
+                                            <p style={{ margin: 0, fontWeight: "600", color: "#333" }}>{bus.from}</p>
+                                            <p style={{ margin: "3px 0 0 0", color: "#666", fontSize: "15px" }}>{bus.time}</p>
+                                        </div>
+                                        <div>
+                                            <p style={{ margin: "0 0 5px 0", color: "#888", fontSize: "13px" }}>TO</p>
+                                            <p style={{ margin: 0, fontWeight: "600", color: "#333" }}>{bus.to}</p>
+                                            <p style={{ margin: "3px 0 0 0", color: "#666", fontSize: "15px" }}>{bus.arrivalTime}</p>
+                                        </div>
+                                    </div>
+
+                                    <div style={{ display: "flex", gap: "20px", flexWrap: "wrap" }}>
+                                        <span style={{ color: "#666", fontSize: "14px" }}>
+                                            🪑 {bus.availableSeats || "N/A"} seats available
+                                        </span>
+                                        {bus.amenities && bus.amenities.length > 0 && (
+                                            <span style={{ color: "#888", fontSize: "13px" }}>
+                                                ✨ {bus.amenities.slice(0, 3).join(", ")}
+                                            </span>
+                                        )}
+                                    </div>
                                 </div>
-                                <div style={{ textAlign: "right" }}>
-                                    <div style={{ fontSize: "28px", fontWeight: "bold", color: "#28a745", marginBottom: "10px" }}>
+
+                                <div style={{ textAlign: "center", minWidth: "150px" }}>
+                                    <div style={{ fontSize: "32px", fontWeight: "bold", color: "#28a745", marginBottom: "5px" }}>
                                         {bus.price}
                                     </div>
-                                    <div style={{ fontSize: "14px", color: "#888", marginBottom: "15px" }}>per person</div>
+                                    <div style={{ fontSize: "13px", color: "#888", marginBottom: "15px" }}>per person</div>
                                     <button
                                         onClick={() => navigate("/seats", { state: { bus: { ...bus, travelDate: searchData.date } } })}
                                         style={{
-                                            padding: "12px 25px",
-                                            backgroundColor: "#007bff",
+                                            padding: "14px 30px",
+                                            backgroundColor: "#483f19",
                                             color: "#fff",
-                                            borderRadius: "6px",
+                                            borderRadius: "8px",
                                             cursor: "pointer",
                                             border: "none",
-                                            fontSize: "15px",
-                                            fontWeight: "500"
+                                            fontSize: "16px",
+                                            fontWeight: "600",
+                                            transition: "background 0.3s"
                                         }}
                                     >
-                                        Select Seats
+                                        🎫 Select Seats
                                     </button>
                                 </div>
                             </div>
                         </div>
                     ))}
                 </div>
-            )}
-
-            <div style={{ marginTop: "30px" }}>
-                <button
-                    onClick={() => navigate("/search")}
-                    style={{
-                        padding: "10px 20px",
-                        backgroundColor: "transparent",
-                        color: "#666",
-                        borderRadius: "6px",
-                        cursor: "pointer",
-                        border: "1px solid #ddd"
-                    }}
-                >
-                    ← Back to Search
-                </button>
             </div>
         </div>
     );

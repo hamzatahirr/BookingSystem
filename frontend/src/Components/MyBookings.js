@@ -23,7 +23,6 @@ export default function MyBookings() {
                 );
                 setBookings(response.data);
             } catch (err) {
-                console.error("Error fetching bookings:", err);
                 setError("Failed to load bookings");
             } finally {
                 setLoading(false);
@@ -45,137 +44,160 @@ export default function MyBookings() {
             setBookings(bookings.map(b => 
                 b.id === bookingId ? { ...b, status: "Cancelled" } : b
             ));
-            alert("Booking cancelled successfully");
         } catch (err) {
-            console.error("Cancel error:", err);
             alert("Failed to cancel booking");
         }
     };
 
     if (loading) {
         return (
-            <div style={{ padding: "40px", textAlign: "center" }}>
-                <h2>Loading your bookings...</h2>
+            <div style={{ padding: "40px", minHeight: "70vh", backgroundColor: "#f5f6fa", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <div style={{ textAlign: "center" }}>
+                    <div style={{ fontSize: "40px", marginBottom: "15px" }}>⏳</div>
+                    <h2 style={{ color: "#666" }}>Loading your bookings...</h2>
+                </div>
             </div>
         );
     }
 
     return (
-        <div style={{ padding: "40px", minHeight: "70vh", backgroundColor: "#f5f6fa" }}>
-            <h2 style={{ marginBottom: "30px" }}>My Bookings</h2>
+        <div style={{ padding: "40px 20px", minHeight: "70vh", backgroundColor: "#f5f6fa" }}>
+            <div style={{ maxWidth: "900px", margin: "0 auto" }}>
+                <h2 style={{ marginBottom: "30px", color: "#333" }}>My Bookings</h2>
 
-            {error && (
-                <div style={{ color: "red", marginBottom: "20px" }}>{error}</div>
-            )}
+                {error && (
+                    <div style={{ 
+                        padding: "15px", 
+                        background: "#f8d7da", 
+                        color: "#721c24", 
+                        borderRadius: "8px", 
+                        marginBottom: "20px" 
+                    }}>
+                        {error}
+                    </div>
+                )}
 
-            {bookings.length === 0 ? (
-                <div style={{ textAlign: "center", padding: "60px" }}>
-                    <p style={{ fontSize: "18px", color: "#666", marginBottom: "20px" }}>
-                        You haven't booked any tickets yet.
-                    </p>
-                    <button
-                        onClick={() => navigate("/search")}
-                        style={{
-                            padding: "12px 25px",
-                            backgroundColor: "#007bff",
-                            color: "white",
-                            border: "none",
-                            borderRadius: "6px",
-                            cursor: "pointer",
-                            fontSize: "15px"
-                        }}
-                    >
-                        Book a Bus
-                    </button>
-                </div>
-            ) : (
-                <div style={{ display: "grid", gap: "20px", maxWidth: "900px" }}>
-                    {bookings.map((booking) => (
-                        <div
-                            key={booking.id}
+                {bookings.length === 0 ? (
+                    <div style={{ textAlign: "center", padding: "60px", background: "white", borderRadius: "16px", boxShadow: "0 4px 20px rgba(0,0,0,0.08)" }}>
+                        <div style={{ fontSize: "70px", marginBottom: "20px" }}>🎫</div>
+                        <h3 style={{ color: "#666", marginBottom: "10px" }}>No Bookings Yet</h3>
+                        <p style={{ color: "#888", marginBottom: "25px" }}>
+                            You haven't booked any tickets yet. Start planning your trip!
+                        </p>
+                        <button
+                            onClick={() => navigate("/search")}
                             style={{
-                                padding: "25px",
-                                borderRadius: "12px",
-                                boxShadow: "0 4px 15px rgba(0,0,0,0.1)",
-                                background: "#fff",
-                                borderLeft: `5px solid ${booking.status === "Confirmed" ? "#28a745" : "#dc3545"}`
+                                padding: "14px 30px",
+                                backgroundColor: "#483f19",
+                                color: "white",
+                                border: "none",
+                                borderRadius: "8px",
+                                cursor: "pointer",
+                                fontSize: "16px",
+                                fontWeight: "500"
                             }}
                         >
-                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-                                <div>
-                                    <div style={{ display: "flex", alignItems: "center", gap: "15px", marginBottom: "10px" }}>
-                                        <h3 style={{ margin: 0 }}>{booking.busName}</h3>
-                                        <span style={{
-                                            padding: "4px 12px",
-                                            borderRadius: "20px",
-                                            fontSize: "12px",
-                                            background: booking.status === "Confirmed" ? "#d4edda" : "#f8d7da",
-                                            color: booking.status === "Confirmed" ? "#155724" : "#721c24"
-                                        }}>
-                                            {booking.status}
-                                        </span>
+                            🔍 Search Buses
+                        </button>
+                    </div>
+                ) : (
+                    <div style={{ display: "grid", gap: "20px" }}>
+                        {bookings.map((booking) => (
+                            <div
+                                key={booking.id}
+                                style={{
+                                    padding: "25px",
+                                    borderRadius: "16px",
+                                    boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
+                                    background: "#fff",
+                                    borderLeft: `6px solid ${booking.status === "Confirmed" ? "#28a745" : "#dc3545"}`
+                                }}
+                            >
+                                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "20px" }}>
+                                    <div style={{ flex: "1 1 400px" }}>
+                                        <div style={{ display: "flex", alignItems: "center", gap: "15px", marginBottom: "15px", flexWrap: "wrap" }}>
+                                            <h3 style={{ margin: 0, fontSize: "22px", color: "#333" }}>{booking.busName}</h3>
+                                            <span style={{
+                                                padding: "6px 14px",
+                                                borderRadius: "20px",
+                                                fontSize: "13px",
+                                                fontWeight: "500",
+                                                background: booking.status === "Confirmed" ? "#d4edda" : "#f8d7da",
+                                                color: booking.status === "Confirmed" ? "#155724" : "#721c24"
+                                            }}>
+                                                {booking.status}
+                                            </span>
+                                        </div>
+                                        
+                                        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "15px", marginBottom: "15px" }}>
+                                            <div>
+                                                <p style={{ margin: "0 0 5px 0", color: "#888", fontSize: "13px" }}>ROUTE</p>
+                                                <p style={{ margin: 0, fontWeight: "600", color: "#333" }}>{booking.from} → {booking.to}</p>
+                                            </div>
+                                            <div>
+                                                <p style={{ margin: "0 0 5px 0", color: "#888", fontSize: "13px" }}>DATE & TIME</p>
+                                                <p style={{ margin: 0, fontWeight: "600", color: "#333" }}>{booking.travelDate} • {booking.departureTime}</p>
+                                            </div>
+                                            <div>
+                                                <p style={{ margin: "0 0 5px 0", color: "#888", fontSize: "13px" }}>SEATS</p>
+                                                <p style={{ margin: 0, fontWeight: "600", color: "#333" }}>{booking.seats.map(s => s.seatNumber).join(", ")}</p>
+                                            </div>
+                                            <div>
+                                                <p style={{ margin: "0 0 5px 0", color: "#888", fontSize: "13px" }}>PASSENGER</p>
+                                                <p style={{ margin: 0, fontWeight: "600", color: "#333" }}>{booking.passengerName}</p>
+                                            </div>
+                                        </div>
+
+                                        <p style={{ margin: "10px 0 0 0", color: "#888", fontSize: "13px" }}>
+                                            Booking ID: #{booking.id} | Booked on: {new Date(booking.bookingDate).toLocaleDateString()}
+                                        </p>
                                     </div>
-                                    
-                                    <p style={{ margin: "5px 0", color: "#666" }}>
-                                        <strong>From:</strong> {booking.from} → <strong>To:</strong> {booking.to}
-                                    </p>
-                                    <p style={{ margin: "5px 0", color: "#666" }}>
-                                        <strong>Time:</strong> {booking.departureTime} → {booking.arrivalTime}
-                                    </p>
-                                    <p style={{ margin: "5px 0", color: "#666" }}>
-                                        <strong>Travel Date:</strong> {booking.travelDate}
-                                    </p>
-                                    <p style={{ margin: "5px 0", color: "#666" }}>
-                                        <strong>Seats:</strong> {booking.seats.map(s => s.seatNumber).join(", ")}
-                                    </p>
-                                    <p style={{ margin: "5px 0", color: "#666" }}>
-                                        <strong>Passenger:</strong> {booking.passengerName} | {booking.passengerPhone}
-                                    </p>
-                                    <p style={{ margin: "5px 0", color: "#888", fontSize: "14px" }}>
-                                        <strong>Booked on:</strong> {new Date(booking.bookingDate).toLocaleDateString()}
-                                    </p>
-                                </div>
-                                <div style={{ textAlign: "right" }}>
-                                    <div style={{ fontSize: "24px", fontWeight: "bold", color: "#28a745", marginBottom: "15px" }}>
-                                        ${booking.totalPrice}
+
+                                    <div style={{ textAlign: "center", minWidth: "120px" }}>
+                                        <div style={{ fontSize: "28px", fontWeight: "bold", color: "#28a745", marginBottom: "15px" }}>
+                                            ${booking.totalPrice}
+                                        </div>
+                                        {booking.status === "Confirmed" && (
+                                            <button
+                                                onClick={() => handleCancel(booking.id)}
+                                                style={{
+                                                    padding: "10px 20px",
+                                                    backgroundColor: "#dc3545",
+                                                    color: "white",
+                                                    border: "none",
+                                                    borderRadius: "8px",
+                                                    cursor: "pointer",
+                                                    fontSize: "14px",
+                                                    fontWeight: "500"
+                                                }}
+                                            >
+                                                ❌ Cancel
+                                            </button>
+                                        )}
                                     </div>
-                                    {booking.status === "Confirmed" && (
-                                        <button
-                                            onClick={() => handleCancel(booking.id)}
-                                            style={{
-                                                padding: "10px 20px",
-                                                backgroundColor: "#dc3545",
-                                                color: "white",
-                                                border: "none",
-                                                borderRadius: "6px",
-                                                cursor: "pointer",
-                                                fontSize: "14px"
-                                            }}
-                                        >
-                                            Cancel Booking
-                                        </button>
-                                    )}
                                 </div>
                             </div>
-                        </div>
-                    ))}
-                </div>
-            )}
+                        ))}
+                    </div>
+                )}
 
-            <div style={{ marginTop: "30px" }}>
-                <button
-                    onClick={() => navigate("/home")}
-                    style={{
-                        padding: "10px 20px",
-                        backgroundColor: "transparent",
-                        color: "#666",
-                        borderRadius: "6px",
-                        cursor: "pointer",
-                        border: "1px solid #ddd"
-                    }}
-                >
-                    ← Back to Home
-                </button>
+                <div style={{ marginTop: "30px", textAlign: "center" }}>
+                    <button
+                        onClick={() => navigate("/home")}
+                        style={{
+                            padding: "12px 25px",
+                            backgroundColor: "white",
+                            color: "#483f19",
+                            borderRadius: "8px",
+                            cursor: "pointer",
+                            border: "2px solid #483f19",
+                            fontSize: "15px",
+                            fontWeight: "500"
+                        }}
+                    >
+                        ← Back to Home
+                    </button>
+                </div>
             </div>
         </div>
     );

@@ -61,7 +61,6 @@ export default function Help() {
         }
 
         const data = await response.json();
-        console.log("Response from backend:", data); // Optional: For debugging
 
         setSuccessMessage("Your message has been sent to the admin!");
         setFormData({

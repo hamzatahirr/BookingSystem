@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 
@@ -15,9 +15,25 @@ export default function SeatSelection() {
 
     if (!busData) {
         return (
-            <div style={{ padding: "40px", textAlign: "center" }}>
-                <h2>No bus selected</h2>
-                <button onClick={() => navigate("/search")}>Search Buses</button>
+            <div style={{ padding: "40px", minHeight: "70vh", backgroundColor: "#f5f6fa", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <div style={{ textAlign: "center" }}>
+                    <h2 style={{ color: "#666" }}>No bus selected</h2>
+                    <p style={{ color: "#888", marginBottom: "20px" }}>Please select a bus first</p>
+                    <button
+                        onClick={() => navigate("/search")}
+                        style={{
+                            padding: "12px 25px",
+                            backgroundColor: "#483f19",
+                            color: "white",
+                            border: "none",
+                            borderRadius: "8px",
+                            cursor: "pointer",
+                            fontSize: "15px"
+                        }}
+                    >
+                        🔍 Search Buses
+                    </button>
+                </div>
             </div>
         );
     }
@@ -35,31 +51,48 @@ export default function SeatSelection() {
         return selectedSeats.some(s => s.seatNumber === seatNum);
     };
 
-    const isSeatAvailable = (seatNum) => {
-        return busData.availableSeats > seatNum - 1 || selectedSeats.length < busData.availableSeats;
+    const isSeatBooked = (seatNum) => {
+        return busData.availableSeats < seatNum;
     };
 
     const toggleSeat = (seatNum) => {
-        if (!isSeatAvailable(seatNum)) {
+        if (isSeatBooked(seatNum)) {
             return;
         }
 
         if (isSeatSelected(seatNum)) {
             setSelectedSeats(selectedSeats.filter(s => s.seatNumber !== seatNum));
+            setError("");
         } else {
             setSelectedSeats([...selectedSeats, { seatNumber: seatNum, seatPrice: price }]);
+            setError("");
         }
     };
 
     const totalPrice = selectedSeats.length * price;
 
-    const handleBooking = async () => {
+    const validateForm = () => {
         if (selectedSeats.length === 0) {
             setError("Please select at least one seat");
-            return;
+            return false;
         }
-        if (!passengerName || !passengerPhone) {
-            setError("Please fill in passenger details");
+        if (!passengerName.trim()) {
+            setError("Please enter passenger name");
+            return false;
+        }
+        if (!passengerPhone.trim()) {
+            setError("Please enter phone number");
+            return false;
+        }
+        if (passengerPhone.length < 10) {
+            setError("Please enter a valid phone number");
+            return false;
+        }
+        return true;
+    };
+
+    const handleBooking = async () => {
+        if (!validateForm()) {
             return;
         }
 
@@ -67,7 +100,6 @@ export default function SeatSelection() {
         setError("");
 
         const userId = sessionStorage.getItem("userId");
-        const userEmail = sessionStorage.getItem("email");
 
         if (!userId) {
             navigate("/login");
@@ -87,15 +119,14 @@ export default function SeatSelection() {
                     seats: selectedSeats,
                     totalPrice: totalPrice,
                     travelDate: busData.travelDate,
-                    passengerName,
-                    passengerPhone,
+                    passengerName: passengerName.trim(),
+                    passengerPhone: passengerPhone.trim(),
                     userId
                 }
             );
 
             navigate("/confirmation", { state: response.data });
         } catch (err) {
-            console.error("Booking error:", err);
             setError("Booking failed. Please try again.");
         } finally {
             setLoading(false);
@@ -104,153 +135,178 @@ export default function SeatSelection() {
 
     const getSeatColor = (seatNum) => {
         if (isSeatSelected(seatNum)) return "#28a745";
-        if (!isSeatAvailable(seatNum)) return "#dc3545";
-        if (seatNum <= busData.availableSeats) return "#007bff";
-        return "#6c757d";
+        if (isSeatBooked(seatNum)) return "#dc3545";
+        return "#483f19";
     };
 
     return (
-        <div style={{ padding: "40px", minHeight: "70vh", backgroundColor: "#f5f6fa" }}>
+        <div style={{ padding: "40px 20px", minHeight: "70vh", backgroundColor: "#f5f6fa" }}>
             <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
-                <h2 style={{ marginBottom: "20px" }}>Select Your Seats</h2>
+                <h2 style={{ marginBottom: "10px", color: "#333" }}>Select Your Seats</h2>
+                <p style={{ marginBottom: "30px", color: "#666" }}>
+                    {busData.bus} • {busData.from} → {busData.to} • {busData.travelDate}
+                </p>
 
                 <div style={{ 
                     display: "grid", 
-                    gridTemplateColumns: "1fr 350px", 
+                    gridTemplateColumns: { xs: "1fr", lg: "1fr 380px" }, 
                     gap: "30px" 
                 }}>
-                    <div style={{ background: "white", padding: "30px", borderRadius: "12px" }}>
-                        <div style={{ marginBottom: "20px", display: "flex", gap: "20px", justifyContent: "center" }}>
+                    <div style={{ background: "white", padding: "30px", borderRadius: "16px", boxShadow: "0 4px 20px rgba(0,0,0,0.08)" }}>
+                        <div style={{ marginBottom: "25px", display: "flex", gap: "25px", justifyContent: "center", flexWrap: "wrap" }}>
                             <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                                <span style={{ width: "20px", height: "20px", background: "#007bff", borderRadius: "4px" }}></span>
-                                <small>Available</small>
+                                <span style={{ width: "24px", height: "24px", background: "#483f19", borderRadius: "6px" }}></span>
+                                <small style={{ color: "#666" }}>Available</small>
                             </div>
                             <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                                <span style={{ width: "20px", height: "20px", background: "#28a745", borderRadius: "4px" }}></span>
-                                <small>Selected</small>
+                                <span style={{ width: "24px", height: "24px", background: "#28a745", borderRadius: "6px" }}></span>
+                                <small style={{ color: "#666" }}>Selected</small>
                             </div>
                             <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                                <span style={{ width: "20px", height: "20px", background: "#dc3545", borderRadius: "4px" }}></span>
-                                <small>Booked</small>
+                                <span style={{ width: "24px", height: "24px", background: "#dc3545", borderRadius: "6px" }}></span>
+                                <small style={{ color: "#666" }}>Booked</small>
                             </div>
                         </div>
 
-                        <div style={{ 
-                            display: "flex", 
-                            flexDirection: "column", 
-                            gap: "10px",
-                            alignItems: "center"
-                        }}>
+                        <div style={{ display: "flex", flexDirection: "column", gap: "12px", alignItems: "center" }}>
                             <div style={{ 
                                 width: "100%", 
                                 textAlign: "center", 
-                                padding: "10px",
-                                background: "#343a40",
+                                padding: "12px",
+                                background: "#483f19",
                                 color: "white",
-                                borderRadius: "8px 8px 0 0"
+                                borderRadius: "8px 8px 0 0",
+                                fontWeight: "600"
                             }}>
-                                FRONT
+                                🚌 BUS SEAT LAYOUT
                             </div>
                             
                             {Array.from({ length: Math.ceil(totalSeats / seatsPerRow) }, (_, rowIndex) => (
-                                <div key={rowIndex} style={{ display: "flex", gap: "15px" }}>
+                                <div key={rowIndex} style={{ display: "flex", gap: "12px", alignItems: "center" }}>
                                     {seatNumber.slice(rowIndex * seatsPerRow, (rowIndex + 1) * seatsPerRow).map((seatNum) => (
                                         <button
                                             key={seatNum}
                                             onClick={() => toggleSeat(seatNum)}
-                                            disabled={!isSeatAvailable(seatNum) && !isSeatSelected(seatNum)}
+                                            disabled={isSeatBooked(seatNum)}
+                                            title={isSeatBooked(seatNum) ? "Already booked" : `Seat ${seatNum}`}
                                             style={{
-                                                width: "50px",
-                                                height: "50px",
+                                                width: "55px",
+                                                height: "55px",
                                                 border: "none",
-                                                borderRadius: "8px",
+                                                borderRadius: "10px",
                                                 background: getSeatColor(seatNum),
                                                 color: "white",
-                                                cursor: isSeatAvailable(seatNum) || isSeatSelected(seatNum) ? "pointer" : "not-allowed",
+                                                cursor: isSeatBooked(seatNum) ? "not-allowed" : "pointer",
                                                 fontWeight: "bold",
-                                                opacity: (!isSeatAvailable(seatNum) && !isSeatSelected(seatNum)) ? 0.5 : 1
+                                                fontSize: "16px",
+                                                opacity: isSeatBooked(seatNum) ? 0.5 : 1,
+                                                transition: "transform 0.1s, background 0.2s"
                                             }}
                                         >
                                             {seatNum}
                                         </button>
                                     ))}
-                                    {rowIndex % 2 === 0 && <div style={{ width: "30px" }}></div>}
+                                    {rowIndex % 2 === 0 && <div style={{ width: "40px" }}></div>}
                                 </div>
                             ))}
                         </div>
                     </div>
 
-                    <div style={{ background: "white", padding: "25px", borderRadius: "12px", height: "fit-content" }}>
-                        <h3 style={{ marginBottom: "20px" }}>Booking Summary</h3>
+                    <div style={{ background: "white", padding: "30px", borderRadius: "16px", height: "fit-content", boxShadow: "0 4px 20px rgba(0,0,0,0.08)", position: "sticky", top: "20px" }}>
+                        <h3 style={{ marginBottom: "20px", color: "#333", borderBottom: "2px solid #eee", paddingBottom: "15px" }}>Booking Summary</h3>
                         
                         <div style={{ marginBottom: "15px" }}>
-                            <strong>Bus:</strong> {busData.bus}
-                        </div>
-                        <div style={{ marginBottom: "15px" }}>
-                            <strong>From:</strong> {busData.from}
-                        </div>
-                        <div style={{ marginBottom: "15px" }}>
-                            <strong>To:</strong> {busData.to}
-                        </div>
-                        <div style={{ marginBottom: "15px" }}>
-                            <strong>Time:</strong> {busData.time}
-                        </div>
-                        <div style={{ marginBottom: "15px" }}>
-                            <strong>Date:</strong> {busData.travelDate || "Not specified"}
+                            <span style={{ color: "#888", fontSize: "14px" }}>Bus</span>
+                            <p style={{ margin: "5px 0 0 0", fontWeight: "600", fontSize: "18px" }}>{busData.bus}</p>
                         </div>
                         
-                        <hr style={{ margin: "20px 0" }} />
-                        
-                        <div style={{ marginBottom: "15px" }}>
-                            <strong>Selected Seats:</strong> {selectedSeats.length > 0 ? selectedSeats.map(s => s.seatNumber).join(", ") : "None"}
+                        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "15px", marginBottom: "20px" }}>
+                            <div>
+                                <span style={{ color: "#888", fontSize: "14px" }}>From</span>
+                                <p style={{ margin: "5px 0 0 0", fontWeight: "600" }}>{busData.from}</p>
+                            </div>
+                            <div>
+                                <span style={{ color: "#888", fontSize: "14px" }}>To</span>
+                                <p style={{ margin: "5px 0 0 0", fontWeight: "600" }}>{busData.to}</p>
+                            </div>
+                            <div>
+                                <span style={{ color: "#888", fontSize: "14px" }}>Date</span>
+                                <p style={{ margin: "5px 0 0 0", fontWeight: "600" }}>{busData.travelDate}</p>
+                            </div>
+                            <div>
+                                <span style={{ color: "#888", fontSize: "14px" }}>Time</span>
+                                <p style={{ margin: "5px 0 0 0", fontWeight: "600" }}>{busData.time}</p>
+                            </div>
                         </div>
                         
-                        <div style={{ marginBottom: "20px" }}>
-                            <strong>Price per seat:</strong> ${price}
-                        </div>
-                        
-                        <div style={{ fontSize: "20px", fontWeight: "bold", marginBottom: "20px" }}>
-                            Total: ${totalPrice}
+                        <div style={{ background: "#f8f9fa", padding: "20px", borderRadius: "12px", marginBottom: "20px" }}>
+                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" }}>
+                                <span style={{ color: "#666" }}>Selected Seats</span>
+                                <span style={{ fontWeight: "bold", fontSize: "18px" }}>
+                                    {selectedSeats.length > 0 ? selectedSeats.map(s => s.seatNumber).join(", ") : "None"}
+                                </span>
+                            </div>
+                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" }}>
+                                <span style={{ color: "#666" }}>Price per seat</span>
+                                <span>${price}</span>
+                            </div>
+                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: "10px", borderTop: "2px solid #ddd" }}>
+                                <span style={{ fontWeight: "bold", fontSize: "18px" }}>Total</span>
+                                <span style={{ fontWeight: "bold", fontSize: "28px", color: "#28a745" }}>${totalPrice}</span>
+                            </div>
                         </div>
 
-                        <hr style={{ margin: "20px 0" }} />
-
-                        <h4 style={{ marginBottom: "15px" }}>Passenger Details</h4>
-                        
-                        <div style={{ marginBottom: "15px" }}>
-                            <label style={{ display: "block", marginBottom: "5px" }}>Passenger Name:</label>
-                            <input
-                                type="text"
-                                value={passengerName}
-                                onChange={(e) => setPassengerName(e.target.value)}
-                                placeholder="Enter passenger name"
-                                style={{
-                                    width: "100%",
-                                    padding: "10px",
-                                    borderRadius: "6px",
-                                    border: "1px solid #ddd"
-                                }}
-                            />
-                        </div>
-                        
                         <div style={{ marginBottom: "20px" }}>
-                            <label style={{ display: "block", marginBottom: "5px" }}>Phone Number:</label>
-                            <input
-                                type="tel"
-                                value={passengerPhone}
-                                onChange={(e) => setPassengerPhone(e.target.value)}
-                                placeholder="Enter phone number"
-                                style={{
-                                    width: "100%",
-                                    padding: "10px",
-                                    borderRadius: "6px",
-                                    border: "1px solid #ddd"
-                                }}
-                            />
+                            <h4 style={{ marginBottom: "15px", color: "#333" }}>Passenger Details</h4>
+                            
+                            <div style={{ marginBottom: "15px" }}>
+                                <label style={{ display: "block", marginBottom: "8px", fontWeight: "500", color: "#555" }}>Full Name *</label>
+                                <input
+                                    type="text"
+                                    value={passengerName}
+                                    onChange={(e) => { setPassengerName(e.target.value); setError(""); }}
+                                    placeholder="Enter passenger name"
+                                    style={{
+                                        width: "100%",
+                                        padding: "14px",
+                                        borderRadius: "8px",
+                                        border: "2px solid #ddd",
+                                        fontSize: "16px",
+                                        boxSizing: "border-box"
+                                    }}
+                                />
+                            </div>
+                            
+                            <div style={{ marginBottom: "10px" }}>
+                                <label style={{ display: "block", marginBottom: "8px", fontWeight: "500", color: "#555" }}>Phone Number *</label>
+                                <input
+                                    type="tel"
+                                    value={passengerPhone}
+                                    onChange={(e) => { setPassengerPhone(e.target.value); setError(""); }}
+                                    placeholder="Enter phone number"
+                                    style={{
+                                        width: "100%",
+                                        padding: "14px",
+                                        borderRadius: "8px",
+                                        border: "2px solid #ddd",
+                                        fontSize: "16px",
+                                        boxSizing: "border-box"
+                                    }}
+                                />
+                            </div>
                         </div>
 
                         {error && (
-                            <div style={{ color: "red", marginBottom: "15px" }}>{error}</div>
+                            <div style={{ 
+                                padding: "12px", 
+                                background: "#f8d7da", 
+                                color: "#721c24", 
+                                borderRadius: "8px", 
+                                marginBottom: "15px",
+                                textAlign: "center"
+                            }}>
+                                {error}
+                            </div>
                         )}
 
                         <button
@@ -258,32 +314,35 @@ export default function SeatSelection() {
                             disabled={loading || selectedSeats.length === 0}
                             style={{
                                 width: "100%",
-                                padding: "15px",
+                                padding: "16px",
                                 backgroundColor: loading ? "#ccc" : "#28a745",
                                 color: "white",
                                 border: "none",
                                 borderRadius: "8px",
-                                fontSize: "16px",
-                                cursor: loading ? "not-allowed" : "pointer"
+                                fontSize: "18px",
+                                fontWeight: "600",
+                                cursor: loading ? "not-allowed" : "pointer",
+                                marginBottom: "12px"
                             }}
                         >
-                            {loading ? "Processing..." : "Confirm Booking"}
+                            {loading ? "⏳ Processing..." : "✅ Confirm Booking"}
                         </button>
 
                         <button
-                            onClick={() => navigate("/results", { state: [busData] })}
+                            onClick={() => navigate("/results", { state: { buses: [busData], searchData: { date: busData.travelDate } } })}
                             style={{
                                 width: "100%",
-                                marginTop: "10px",
-                                padding: "12px",
+                                padding: "14px",
                                 backgroundColor: "transparent",
                                 color: "#666",
-                                border: "1px solid #ddd",
+                                border: "2px solid #ddd",
                                 borderRadius: "8px",
-                                cursor: "pointer"
+                                cursor: "pointer",
+                                fontSize: "15px",
+                                fontWeight: "500"
                             }}
                         >
-                            Back to Results
+                            ← Back to Results
                         </button>
                     </div>
                 </div>
