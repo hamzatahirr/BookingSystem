@@ -1,5 +1,4 @@
 import React, { useState, useCallback } from "react";
-import auth_bg from "../Assets/Owner_Auth_Bg.png";
 
 export default function Help() {
   const [formData, setFormData] = useState({
@@ -9,7 +8,7 @@ export default function Help() {
 
   const [errors, setErrors] = useState({});
   const [successMessage, setSuccessMessage] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false); // Loading state
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = useCallback(
     (e) => {
@@ -21,8 +20,8 @@ export default function Help() {
 
   const validate = () => {
     const newErrors = {};
-    if (!formData.subject) newErrors.subject = "Purpose (Subject) is required";
-    if (!formData.body) newErrors.body = "body (Body) is required";
+    if (!formData.subject) newErrors.subject = "Subject is required";
+    if (!formData.body) newErrors.body = "Message is required";
     return newErrors;
   };
 
@@ -32,7 +31,7 @@ export default function Help() {
       const formErrors = validate();
       if (Object.keys(formErrors).length > 0) {
         setErrors(formErrors);
-        setSuccessMessage(""); // Clear success message if errors exist
+        setSuccessMessage("");
         return;
       }
 
@@ -41,7 +40,6 @@ export default function Help() {
 
       const userEmail = sessionStorage.getItem("email") || "NoEmailProvided";
 
-      // Append the email to the subject
       const updatedPayload = {
         ...formData,
         subject: `Ground Owner Portal: \n${formData.subject} - ${userEmail}`,
@@ -78,64 +76,110 @@ export default function Help() {
   );
 
   return (
-    <>
-      <div style={{ backgroundImage: `url(${auth_bg})` }}>
-        <div className="container d-flex-flex-column align-items-center py-5">
-          <h1 className="text-center" style={{ color: "rgb(0 136 203)" }}>
-            Need Help?
-          </h1>
-          <h1 className="text-center pb-3" style={{ color: "rgb(0 136 203)" }}>
-            Send body to Admin
-          </h1>
-          <form onSubmit={handleSubmit}>
-            <div className="mb-3">
-              <label
-                className="form-label"
-                style={{ color: "rgb(0 136 203)", fontSize: "25px" }}
-              >
-                Subject:
-              </label>
-              <textarea
-                type="text"
-                className="form-control border-3 cus_css"
-                name="subject"
-                value={formData.subject}
-                onChange={handleChange}
-                rows="1"
-                placeholder=""
-              ></textarea>
-              {errors.subject && <p className="error-text">{errors.subject}</p>}
-            </div>
-            <div className="mb-3">
-              <label
-                className="form-label"
-                style={{ color: "rgb(0 136 203)", fontSize: "25px" }}
-              >
-                Message:
-              </label>
-              <textarea
-                className="form-control border-3"
-                name="body"
-                value={formData.body}
-                onChange={handleChange}
-                rows="14"
-                placeholder=""
-              ></textarea>
-              {errors.body && <p className="error-text">{errors.body}</p>}
-            </div>
-            <div className="submit-button-container pt-5">
-              <button
-                type="submit"
-                className="submit-button"
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? "Sending..." : "Send"}
-              </button>
-            </div>
-            {successMessage && <p className="success-text">{successMessage}</p>}
-          </form>
+    <div style={{
+      minHeight: "80vh",
+      backgroundColor: "#f5f6fa",
+      padding: "40px 20px",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "flex-start"
+    }}>
+      <div style={{
+        width: "100%",
+        maxWidth: "700px",
+        backgroundColor: "white",
+        borderRadius: "20px",
+        boxShadow: "0 8px 30px rgba(0,0,0,0.12)",
+        overflow: "hidden"
+      }}>
+        <div style={{
+          background: "linear-gradient(135deg, #483f19 0%, #6b5d2e 100%)",
+          padding: "30px",
+          textAlign: "center"
+        }}>
+          <h1 style={{ color: "#fff", margin: "0 0 10px 0" }}>Need Help?</h1>
+          <p style={{ color: "rgba(255,255,255,0.8)", margin: 0 }}>Send a message to the admin</p>
         </div>
+
+        <form onSubmit={handleSubmit} style={{ padding: "30px" }}>
+          <div style={{ marginBottom: "25px" }}>
+            <label style={{ display: "block", marginBottom: "8px", color: "#333", fontWeight: "500", fontSize: "16px" }}>
+              Subject
+            </label>
+            <textarea
+              type="text"
+              name="subject"
+              value={formData.subject}
+              onChange={handleChange}
+              rows="2"
+              style={{
+                width: "100%",
+                padding: "12px 15px",
+                border: errors.subject ? "1px solid #dc3545" : "1px solid #ddd",
+                borderRadius: "10px",
+                fontSize: "14px",
+                fontFamily: "inherit",
+                resize: "vertical",
+                boxSizing: "border-box"
+              }}
+            ></textarea>
+            {errors.subject && <p style={{ color: "#dc3545", fontSize: "13px", marginTop: "5px" }}>{errors.subject}</p>}
+          </div>
+          <div style={{ marginBottom: "25px" }}>
+            <label style={{ display: "block", marginBottom: "8px", color: "#333", fontWeight: "500", fontSize: "16px" }}>
+              Message
+            </label>
+            <textarea
+              name="body"
+              value={formData.body}
+              onChange={handleChange}
+              rows="8"
+              style={{
+                width: "100%",
+                padding: "12px 15px",
+                border: errors.body ? "1px solid #dc3545" : "1px solid #ddd",
+                borderRadius: "10px",
+                fontSize: "14px",
+                fontFamily: "inherit",
+                resize: "vertical",
+                boxSizing: "border-box"
+              }}
+            ></textarea>
+            {errors.body && <p style={{ color: "#dc3545", fontSize: "13px", marginTop: "5px" }}>{errors.body}</p>}
+          </div>
+          <div style={{ textAlign: "center", marginTop: "30px" }}>
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              style={{
+                padding: "14px 40px",
+                backgroundColor: isSubmitting ? "#888" : "#483f19",
+                color: "#fff",
+                border: "none",
+                borderRadius: "10px",
+                fontSize: "16px",
+                fontWeight: "600",
+                cursor: isSubmitting ? "not-allowed" : "pointer",
+                transition: "background-color 0.2s"
+              }}
+            >
+              {isSubmitting ? "Sending..." : "Send Message"}
+            </button>
+          </div>
+          {successMessage && (
+            <p style={{ 
+              textAlign: "center", 
+              marginTop: "20px", 
+              padding: "12px", 
+              borderRadius: "8px",
+              backgroundColor: successMessage.includes("Failed") ? "#f8d7da" : "#d4edda",
+              color: successMessage.includes("Failed") ? "#721c24" : "#155724"
+            }}>
+              {successMessage}
+            </p>
+          )}
+        </form>
       </div>
-    </>
+    </div>
   );
 }

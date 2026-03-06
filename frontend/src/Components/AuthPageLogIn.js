@@ -50,7 +50,7 @@ export default function LogIn() {
     try {
       const response = await axios.post(
         `${process.env.REACT_APP_API_URL}/login`,
-        formData
+        formData,
       );
 
       if (response.data?.token) {
@@ -64,11 +64,8 @@ export default function LogIn() {
       }
 
       navigate("/home");
-
     } catch (err) {
-      setError(
-        err.response?.data?.message || "Invalid email or password"
-      );
+      setError(err.response?.data?.message || "Invalid email or password");
     } finally {
       setLoading(false);
     }
