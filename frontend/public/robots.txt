@@ -1,3 +1,1 @@
-# https://www.robotstxt.org/robotstxt.html
-User-agent: *
-Disallow:
+https://www.figma.com/design/PtREspL1RE2DIqFlRktMCT/Calculator?node-id=0-1&t=VTDa9c6UICWFMYDx-1

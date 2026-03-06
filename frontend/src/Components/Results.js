@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
 export default function Results() {
@@ -7,6 +7,27 @@ export default function Results() {
 
     const buses = location.state?.buses || [];
     const searchData = location.state?.searchData || {};
+
+    useEffect(() => {
+        if (!location.state || !location.state.buses) {
+            const timer = setTimeout(() => {
+                navigate("/search", { replace: true });
+            }, 2000);
+            return () => clearTimeout(timer);
+        }
+    }, [location.state, navigate]);
+
+    if (!location.state || !location.state.buses) {
+        return (
+            <div style={{ padding: "40px", minHeight: "70vh", backgroundColor: "#f5f6fa", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <div style={{ textAlign: "center" }}>
+                    <div style={{ fontSize: "50px", marginBottom: "15px" }}>🔍</div>
+                    <h2 style={{ color: "#666", marginBottom: "10px" }}>No Search Results</h2>
+                    <p style={{ color: "#888" }}>Redirecting to search...</p>
+                </div>
+            </div>
+        );
+    }
 
     if (!Array.isArray(buses) || buses.length === 0) {
         return (
@@ -38,11 +59,11 @@ export default function Results() {
     return (
         <div style={{ padding: "40px 20px", minHeight: "70vh", backgroundColor: "#f5f6fa" }}>
             <div style={{ maxWidth: "900px", margin: "0 auto" }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "30px" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "30px", flexWrap: "wrap", gap: "15px" }}>
                     <div>
                         <h2 style={{ margin: "0 0 5px 0", color: "#333" }}>Available Buses</h2>
                         <p style={{ margin: 0, color: "#666" }}>
-                            {searchData.from} → {searchData.to} | {searchData.date}
+                            {searchData.from || "From"} → {searchData.to || "To"} | {searchData.date || "Date"}
                         </p>
                     </div>
                     <button
@@ -130,7 +151,7 @@ export default function Results() {
                                     </div>
                                     <div style={{ fontSize: "13px", color: "#888", marginBottom: "15px" }}>per person</div>
                                     <button
-                                        onClick={() => navigate("/seats", { state: { bus: { ...bus, travelDate: searchData.date } } })}
+                                        onClick={() => navigate("/seats", { state: { bus: { ...bus, travelDate: searchData.date || bus.travelDate } } })}
                                         style={{
                                             padding: "14px 30px",
                                             backgroundColor: "#483f19",
