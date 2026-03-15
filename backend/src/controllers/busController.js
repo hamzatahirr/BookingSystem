@@ -62,8 +62,21 @@ const addBus = async (req, res) => {
   }
 };
 
+const getCities = async (req, res) => {
+  try {
+    const fromCities = await Bus.distinct('from');
+    const toCities = await Bus.distinct('to');
+    const cities = [...new Set([...fromCities, ...toCities])].sort();
+    res.json(cities);
+  } catch (error) {
+    console.error('Get cities error:', error);
+    res.status(500).json({ message: 'Server error while fetching cities' });
+  }
+};
+
 module.exports = {
   searchBuses,
   getAllBuses,
   addBus,
+  getCities,
 };

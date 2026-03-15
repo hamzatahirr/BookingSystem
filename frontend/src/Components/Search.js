@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
@@ -11,24 +11,86 @@ export default function Search() {
     date: "",
   });
 
+  const [cities, setCities] = useState([]);
+  const [filteredFromCities, setFilteredFromCities] = useState([]);
+  const [filteredToCities, setFilteredToCities] = useState([]);
+  const [showFromDropdown, setShowFromDropdown] = useState(false);
+  const [showToDropdown, setShowToDropdown] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const handleChange = (e) => {
-    setSearchData({
-      ...searchData,
-      [e.target.name]: e.target.value,
-    });
+  const fromRef = useRef(null);
+  const toRef = useRef(null);
+
+  useEffect(() => {
+    const fetchCities = async () => {
+      try {
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/cities`);
+        setCities(response.data);
+        setFilteredFromCities(response.data);
+        setFilteredToCities(response.data);
+      } catch (err) {
+        console.error("Failed to fetch cities:", err);
+      }
+    };
+    fetchCities();
+  }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (fromRef.current && !fromRef.current.contains(event.target)) {
+        setShowFromDropdown(false);
+      }
+      if (toRef.current && !toRef.current.contains(event.target)) {
+        setShowToDropdown(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const filterCities = (value, setFiltered) => {
+    const filtered = cities.filter(city =>
+      city.toLowerCase().includes(value.toLowerCase())
+    );
+    setFiltered(filtered);
+  };
+
+  const handleFromChange = (e) => {
+    const value = e.target.value;
+    setSearchData({ ...searchData, from: value });
+    filterCities(value, setFilteredFromCities);
+    setShowFromDropdown(true);
     setError("");
+  };
+
+  const handleToChange = (e) => {
+    const value = e.target.value;
+    setSearchData({ ...searchData, to: value });
+    filterCities(value, setFilteredToCities);
+    setShowToDropdown(true);
+    setError("");
+  };
+
+  const selectFromCity = (city) => {
+    setSearchData({ ...searchData, from: city });
+    setFilteredFromCities(cities);
+    setShowFromDropdown(false);
+  };
+
+  const selectToCity = (city) => {
+    setSearchData({ ...searchData, to: city });
+    setFilteredToCities(cities);
+    setShowToDropdown(false);
   };
 
   const validateForm = () => {
     if (!searchData.from.trim()) {
-      setError("Please enter departure city");
+      setError("Please select departure city");
       return false;
     }
     if (!searchData.to.trim()) {
-      setError("Please enter destination city");
+      setError("Please select destination city");
       return false;
     }
     if (!searchData.date) {
@@ -102,6 +164,28 @@ export default function Search() {
     }
   };
 
+  const dropdownStyle = {
+    position: "absolute",
+    top: "100%",
+    left: 0,
+    right: 0,
+    maxHeight: "200px",
+    overflowY: "auto",
+    background: "white",
+    border: "2px solid #ddd",
+    borderTop: "none",
+    borderRadius: "0 0 8px 8px",
+    zIndex: 1000,
+    boxShadow: "0 4px 10px rgba(0,0,0,0.1)"
+  };
+
+  const dropdownItemStyle = {
+    padding: "12px 14px",
+    cursor: "pointer",
+    borderBottom: "1px solid #eee",
+    transition: "background 0.2s"
+  };
+
   return (
     <div style={{ padding: "40px 20px", minHeight: "70vh", backgroundColor: "#f5f6fa", display: "flex", alignItems: "center", justifyContent: "center" }}>
       <div style={{ 
@@ -116,13 +200,15 @@ export default function Search() {
         <p style={{ marginBottom: "30px", color: "#666", textAlign: "center" }}>Find your perfect bus ride</p>
 
         <form onSubmit={handleSearch}>
-          <div style={{ marginBottom: "20px" }}>
+          <div style={{ marginBottom: "20px", position: "relative" }} ref={fromRef}>
             <label style={{ display: "block", marginBottom: "8px", fontWeight: "500", color: "#333" }}>From City</label>
             <input
               name="from"
-              placeholder="Enter departure city"
+              placeholder="Select or type departure city"
               value={searchData.from}
-              onChange={handleChange}
+              onChange={handleFromChange}
+              onFocus={() => setShowFromDropdown(true)}
+              autoComplete="off"
               style={{
                 width: "100%",
                 padding: "14px",
@@ -132,15 +218,32 @@ export default function Search() {
                 boxSizing: "border-box"
               }}
             />
+            {showFromDropdown && filteredFromCities.length > 0 && (
+              <div style={dropdownStyle}>
+                {filteredFromCities.map((city, index) => (
+                  <div
+                    key={index}
+                    style={dropdownItemStyle}
+                    onClick={() => selectFromCity(city)}
+                    onMouseEnter={(e) => e.target.style.background = "#f5f5f5"}
+                    onMouseLeave={(e) => e.target.style.background = "white"}
+                  >
+                    {city}
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
-          <div style={{ marginBottom: "20px" }}>
+          <div style={{ marginBottom: "20px", position: "relative" }} ref={toRef}>
             <label style={{ display: "block", marginBottom: "8px", fontWeight: "500", color: "#333" }}>To City</label>
             <input
               name="to"
-              placeholder="Enter destination city"
+              placeholder="Select or type destination city"
               value={searchData.to}
-              onChange={handleChange}
+              onChange={handleToChange}
+              onFocus={() => setShowToDropdown(true)}
+              autoComplete="off"
               style={{
                 width: "100%",
                 padding: "14px",
@@ -150,6 +253,21 @@ export default function Search() {
                 boxSizing: "border-box"
               }}
             />
+            {showToDropdown && filteredToCities.length > 0 && (
+              <div style={dropdownStyle}>
+                {filteredToCities.map((city, index) => (
+                  <div
+                    key={index}
+                    style={dropdownItemStyle}
+                    onClick={() => selectToCity(city)}
+                    onMouseEnter={(e) => e.target.style.background = "#f5f5f5"}
+                    onMouseLeave={(e) => e.target.style.background = "white"}
+                  >
+                    {city}
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
           <div style={{ marginBottom: "25px" }}>
@@ -158,7 +276,10 @@ export default function Search() {
               type="date"
               name="date"
               value={searchData.date}
-              onChange={handleChange}
+              onChange={(e) => {
+                setSearchData({ ...searchData, date: e.target.value });
+                setError("");
+              }}
               min={new Date().toISOString().split('T')[0]}
               style={{
                 width: "100%",

@@ -12,6 +12,7 @@ import ForgetPass from "./Components/ForgetPass";
 import SeatSelection from "./Components/SeatSelection";
 import BookingConfirmation from "./Components/BookingConfirmation";
 import MyBookings from "./Components/MyBookings";
+import ChatWidget from "./components/chatbot/ChatWidget";
 
 function App() {
     return (
@@ -43,6 +44,7 @@ function App() {
                     </Routes>
                 </main>
                 <Footer />
+                <ChatWidget />
             </div>
         </Router>
     );
